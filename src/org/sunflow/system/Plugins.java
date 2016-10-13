@@ -1,9 +1,7 @@
 package org.sunflow.system;
 
-import org.codehaus.janino.ClassBodyEvaluator;
-import org.codehaus.janino.CompileException;
-import org.codehaus.janino.Parser.ParseException;
-import org.codehaus.janino.Scanner.ScanException;
+import org.codehaus.janino.*;
+import org.codehaus.janino.Parser;
 import org.sunflow.system.UI.Module;
 import org.sunflow.util.FastHashMap;
 
@@ -107,13 +105,7 @@ public final class Plugins<T> {
                 cbe.setExtendedType(baseClass);
             cbe.cook(sourceCode);
             return registerPlugin(name, cbe.getClazz());
-        } catch (CompileException e) {
-            UI.printError(Module.API, "Plugin \"%s\" could not be declared - %s", name, e.getLocalizedMessage());
-            return false;
-        } catch (ParseException e) {
-            UI.printError(Module.API, "Plugin \"%s\" could not be declared - %s", name, e.getLocalizedMessage());
-            return false;
-        } catch (ScanException e) {
+        } catch (CompileException | Scanner.ScanException | Parser.ParseException e) {
             UI.printError(Module.API, "Plugin \"%s\" could not be declared - %s", name, e.getLocalizedMessage());
             return false;
         }

@@ -9,9 +9,8 @@ import java.util.Locale;
 
 import org.codehaus.janino.ClassBodyEvaluator;
 import org.codehaus.janino.CompileException;
+import org.codehaus.janino.Parser;
 import org.codehaus.janino.Scanner;
-import org.codehaus.janino.Parser.ParseException;
-import org.codehaus.janino.Scanner.ScanException;
 import org.sunflow.core.Camera;
 import org.sunflow.core.CameraLens;
 import org.sunflow.core.Display;
@@ -69,8 +68,6 @@ public class SunflowAPI implements SunflowAPIInterface {
         if (maxMb < RECOMMENDED_MAX_SIZE)
             UI.printError(Module.API, "JVM available memory is below %d MB (found %d MB only).\nPlease make sure you launched the program with the -Xmx command line options.", RECOMMENDED_MAX_SIZE, maxMb);
         String compiler = System.getProperty("java.vm.name");
-        if (compiler == null || !(compiler.contains("HotSpot") && compiler.contains("Server")))
-            UI.printError(Module.API, "You do not appear to be running Sun's server JVM\nPerformance may suffer");
         UI.printDetailed(Module.API, "Java environment settings:");
         UI.printDetailed(Module.API, "  * Max memory available : %d MB", maxMb);
         UI.printDetailed(Module.API, "  * Virtual machine name : %s", compiler == null ? "<unknown" : compiler);
@@ -94,7 +91,7 @@ public class SunflowAPI implements SunflowAPIInterface {
         currentFrame = 1;
     }
 
-    public final Hashtable<String,RenderObject> inspect() {
+    public final Hashtable<String, RenderObject> inspect() {
         return renderObjects.inspect();
     }
 
@@ -160,18 +157,18 @@ public class SunflowAPI implements SunflowAPIInterface {
     }
 
     public final void parameter(String name, Point3 value) {
-        parameterList.addPoints(name, InterpolationType.NONE, new float[] {
-                value.x, value.y, value.z });
+        parameterList.addPoints(name, InterpolationType.NONE, new float[]{
+                value.x, value.y, value.z});
     }
 
     public final void parameter(String name, Vector3 value) {
-        parameterList.addVectors(name, InterpolationType.NONE, new float[] {
-                value.x, value.y, value.z });
+        parameterList.addVectors(name, InterpolationType.NONE, new float[]{
+                value.x, value.y, value.z});
     }
 
     public final void parameter(String name, Point2 value) {
-        parameterList.addTexCoords(name, InterpolationType.NONE, new float[] {
-                value.x, value.y });
+        parameterList.addTexCoords(name, InterpolationType.NONE, new float[]{
+                value.x, value.y});
     }
 
     public final void parameter(String name, Matrix4 value) {
@@ -216,10 +213,10 @@ public class SunflowAPI implements SunflowAPIInterface {
      * Update the specfied object using the currently active parameter list. The
      * object is removed if the update fails to avoid leaving inconsistently set
      * objects in the list.
-     * 
+     *
      * @param name name of the object to update
      * @return <code>true</code> if the update was succesfull, or
-     *         <code>false</code> if the update failed
+     * <code>false</code> if the update failed
      */
     private boolean update(String name) {
         boolean success = renderObjects.update(name, parameterList, this);
@@ -239,10 +236,10 @@ public class SunflowAPI implements SunflowAPIInterface {
     /**
      * Attempts to resolve the specified filename by checking it against the
      * texture search path.
-     * 
+     *
      * @param filename filename
      * @return a path which matches the filename, or filename if no matches are
-     *         found
+     * found
      */
     public final String resolveTextureFilename(String filename) {
         return textureSearchPath.resolvePath(filename);
@@ -251,10 +248,10 @@ public class SunflowAPI implements SunflowAPIInterface {
     /**
      * Attempts to resolve the specified filename by checking it against the
      * include search path.
-     * 
+     *
      * @param filename filename
      * @return a path which matches the filename, or filename if no matches are
-     *         found
+     * found
      */
     public final String resolveIncludeFilename(String filename) {
         return includeSearchPath.resolvePath(filename);
@@ -427,7 +424,7 @@ public class SunflowAPI implements SunflowAPIInterface {
     /**
      * Retrieve a geometry object by its name, or <code>null</code> if no
      * geometry was found, or if the specified object is not a geometry.
-     * 
+     *
      * @param name geometry name
      * @return the geometry object associated with that name
      */
@@ -438,7 +435,7 @@ public class SunflowAPI implements SunflowAPIInterface {
     /**
      * Retrieve an instance object by its name, or <code>null</code> if no
      * instance was found, or if the specified object is not an instance.
-     * 
+     *
      * @param name instance name
      * @return the instance object associated with that name
      */
@@ -449,7 +446,7 @@ public class SunflowAPI implements SunflowAPIInterface {
     /**
      * Retrieve a shader object by its name, or <code>null</code> if no shader
      * was found, or if the specified object is not a shader.
-     * 
+     *
      * @param name camera name
      * @return the camera object associate with that name
      */
@@ -464,7 +461,7 @@ public class SunflowAPI implements SunflowAPIInterface {
     /**
      * Retrieve a shader object by its name, or <code>null</code> if no shader
      * was found, or if the specified object is not a shader.
-     * 
+     *
      * @param name shader name
      * @return the shader object associated with that name
      */
@@ -475,7 +472,7 @@ public class SunflowAPI implements SunflowAPIInterface {
     /**
      * Retrieve a modifier object by its name, or <code>null</code> if no
      * modifier was found, or if the specified object is not a modifier.
-     * 
+     *
      * @param name modifier name
      * @return the modifier object associated with that name
      */
@@ -486,7 +483,7 @@ public class SunflowAPI implements SunflowAPIInterface {
     /**
      * Retrieve a light object by its name, or <code>null</code> if no shader
      * was found, or if the specified object is not a light.
-     * 
+     *
      * @param name light name
      * @return the light object associated with that name
      */
@@ -566,7 +563,7 @@ public class SunflowAPI implements SunflowAPIInterface {
      * Janino and are expected to implement a build method (they implement a
      * derived class of SunflowAPI. The build method is called if the code
      * compiles succesfully. Other files types are handled by the parse method.
-     * 
+     *
      * @param filename filename to load
      * @return a valid SunflowAPI object or <code>null</code> on failure
      */
@@ -582,19 +579,7 @@ public class SunflowAPI implements SunflowAPIInterface {
                 FileInputStream stream = new FileInputStream(filename);
                 api = (SunflowAPI) ClassBodyEvaluator.createFastClassBodyEvaluator(new Scanner(filename, stream), SunflowAPI.class, ClassLoader.getSystemClassLoader());
                 stream.close();
-            } catch (CompileException e) {
-                UI.printError(Module.API, "Could not compile: \"%s\"", filename);
-                UI.printError(Module.API, "%s", e.getMessage());
-                return null;
-            } catch (ParseException e) {
-                UI.printError(Module.API, "Could not compile: \"%s\"", filename);
-                UI.printError(Module.API, "%s", e.getMessage());
-                return null;
-            } catch (ScanException e) {
-                UI.printError(Module.API, "Could not compile: \"%s\"", filename);
-                UI.printError(Module.API, "%s", e.getMessage());
-                return null;
-            } catch (IOException e) {
+            } catch (CompileException | IOException | Scanner.ScanException | Parser.ParseException e) {
                 UI.printError(Module.API, "Could not compile: \"%s\"", filename);
                 UI.printError(Module.API, "%s", e.getMessage());
                 return null;
@@ -620,8 +605,8 @@ public class SunflowAPI implements SunflowAPIInterface {
 
     /**
      * Translate specfied file into the native sunflow scene file format.
-     * 
-     * @param filename input filename
+     *
+     * @param filename       input filename
      * @param outputFilename output filename
      * @return <code>true</code> upon success, <code>false</code> otherwise
      */
@@ -661,10 +646,10 @@ public class SunflowAPI implements SunflowAPIInterface {
      * Compile the specified code string via Janino. The code must implement a
      * build method as described above. The build method is not called on the
      * output, it is up the caller to do so.
-     * 
+     *
      * @param code java code string
      * @return a valid SunflowAPI object upon succes, <code>null</code>
-     *         otherwise.
+     * otherwise.
      */
     public static SunflowAPI compile(String code) {
         try {
@@ -674,16 +659,7 @@ public class SunflowAPI implements SunflowAPIInterface {
             t.end();
             UI.printInfo(Module.API, "Compile time: %s", t.toString());
             return api;
-        } catch (CompileException e) {
-            UI.printError(Module.API, "%s", e.getMessage());
-            return null;
-        } catch (ParseException e) {
-            UI.printError(Module.API, "%s", e.getMessage());
-            return null;
-        } catch (ScanException e) {
-            UI.printError(Module.API, "%s", e.getMessage());
-            return null;
-        } catch (IOException e) {
+        } catch (CompileException | IOException | Scanner.ScanException | Parser.ParseException e) {
             UI.printError(Module.API, "%s", e.getMessage());
             return null;
         }
@@ -693,7 +669,7 @@ public class SunflowAPI implements SunflowAPIInterface {
      * Read the value of the current frame. This value is intended only for
      * procedural animation creation. It is not used by the Sunflow core in
      * anyway. The default value is 1.
-     * 
+     *
      * @return current frame number
      */
     public int currentFrame() {
