@@ -1,45 +1,25 @@
 package org.sunflow;
 
+import org.codehaus.commons.compiler.CompileException;
+import org.codehaus.janino.ClassBodyEvaluator;
+import org.codehaus.janino.Scanner;
+import org.sunflow.core.*;
+import org.sunflow.core.ParameterList.InterpolationType;
+import org.sunflow.image.ColorFactory;
+import org.sunflow.image.ColorFactory.ColorSpecificationException;
+import org.sunflow.math.*;
+import org.sunflow.system.FileUtils;
+import org.sunflow.system.SearchPath;
+import org.sunflow.system.Timer;
+import org.sunflow.system.UI;
+import org.sunflow.system.UI.Module;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.Hashtable;
 import java.util.Locale;
-
-import org.codehaus.janino.ClassBodyEvaluator;
-import org.codehaus.janino.CompileException;
-import org.codehaus.janino.Parser;
-import org.codehaus.janino.Scanner;
-import org.sunflow.core.Camera;
-import org.sunflow.core.CameraLens;
-import org.sunflow.core.Display;
-import org.sunflow.core.Geometry;
-import org.sunflow.core.ImageSampler;
-import org.sunflow.core.Instance;
-import org.sunflow.core.LightSource;
-import org.sunflow.core.Modifier;
-import org.sunflow.core.Options;
-import org.sunflow.core.ParameterList;
-import org.sunflow.core.PrimitiveList;
-import org.sunflow.core.RenderObject;
-import org.sunflow.core.Scene;
-import org.sunflow.core.SceneParser;
-import org.sunflow.core.Shader;
-import org.sunflow.core.Tesselatable;
-import org.sunflow.core.ParameterList.InterpolationType;
-import org.sunflow.image.ColorFactory;
-import org.sunflow.image.ColorFactory.ColorSpecificationException;
-import org.sunflow.math.BoundingBox;
-import org.sunflow.math.Matrix4;
-import org.sunflow.math.Point2;
-import org.sunflow.math.Point3;
-import org.sunflow.math.Vector3;
-import org.sunflow.system.FileUtils;
-import org.sunflow.system.SearchPath;
-import org.sunflow.system.Timer;
-import org.sunflow.system.UI;
-import org.sunflow.system.UI.Module;
 
 /**
  * This API gives a simple interface for creating scenes procedurally. This is
@@ -579,7 +559,7 @@ public class SunflowAPI implements SunflowAPIInterface {
                 FileInputStream stream = new FileInputStream(filename);
                 api = (SunflowAPI) ClassBodyEvaluator.createFastClassBodyEvaluator(new Scanner(filename, stream), SunflowAPI.class, ClassLoader.getSystemClassLoader());
                 stream.close();
-            } catch (CompileException | IOException | Scanner.ScanException | Parser.ParseException e) {
+            } catch (CompileException | IOException e) {
                 UI.printError(Module.API, "Could not compile: \"%s\"", filename);
                 UI.printError(Module.API, "%s", e.getMessage());
                 return null;
@@ -659,7 +639,7 @@ public class SunflowAPI implements SunflowAPIInterface {
             t.end();
             UI.printInfo(Module.API, "Compile time: %s", t.toString());
             return api;
-        } catch (CompileException | IOException | Scanner.ScanException | Parser.ParseException e) {
+        } catch (CompileException | IOException e) {
             UI.printError(Module.API, "%s", e.getMessage());
             return null;
         }

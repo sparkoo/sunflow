@@ -1,5 +1,6 @@
 package org.sunflow.system;
 
+import org.codehaus.commons.compiler.CompileException;
 import org.codehaus.janino.*;
 import org.codehaus.janino.Parser;
 import org.sunflow.system.UI.Module;
@@ -105,7 +106,7 @@ public final class Plugins<T> {
                 cbe.setExtendedType(baseClass);
             cbe.cook(sourceCode);
             return registerPlugin(name, cbe.getClazz());
-        } catch (CompileException | Scanner.ScanException | Parser.ParseException e) {
+        } catch (CompileException e) {
             UI.printError(Module.API, "Plugin \"%s\" could not be declared - %s", name, e.getLocalizedMessage());
             return false;
         }
