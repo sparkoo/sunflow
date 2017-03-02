@@ -6,7 +6,7 @@
 
     <groupId>groupId</groupId>
     <artifactId>sunflow</artifactId>
-    <version>0.07.3</version>
+    <version>0.07.4</version>
 
     <properties>
         <java.level>8</java.level>
